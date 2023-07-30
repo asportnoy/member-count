@@ -1,18 +1,20 @@
 {
-  "id": "dev.replugged.PluginTemplate",
-  "name": "Plugin Template",
-  "description": "A plugin template",
+  "id": "dev.albertp.MemberCount",
+  "name": "Member Count",
+  "description": "Show a server's member count above the channel list",
   "author": {
-    "name": "replugged",
-    "discordID": "1000992611840049192",
-    "github": "replugged-org"
+    "name": "asportnoy",
+    "discordID": "489484338514100234",
+    "github": "asportnoy"
   },
   "version": "1.0.0",
   "updater": {
-    "type": "github",
-    "id": "replugged-org/plugin-template"
+    "type": "store",
+    "id": "dev.albertp.MemberCount"
   },
   "license": "MIT",
   "type": "replugged-plugin",
-  "renderer": "src/index.ts"
+  "renderer": "src/index.tsx",
+  "source": "https://github.com/asportnoy/member-count",
+  "image": "https://i.imgur.com/92WcfnA.pngg"
 }
