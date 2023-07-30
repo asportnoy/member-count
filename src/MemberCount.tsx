@@ -6,6 +6,8 @@ import { fetchGuildPopout } from "./util";
 const { React, i18n } = common;
 const { Flex } = components;
 
+const lastFetchedMap = new Map<string, number>();
+
 export default function MemberCount(): React.ReactNode {
   const GuildMemberCountStore =
     webpack.getByStoreName<GuildMemberCountStore>("GuildMemberCountStore");
@@ -44,8 +46,13 @@ export default function MemberCount(): React.ReactNode {
     }
 
     const popoutGuild = GuildPopoutStore.getGuild(guildId);
-    if (!popoutGuild && !GuildPopoutStore.isFetchingGuild(guildId)) {
-      void fetchGuildPopout(guildId);
+    const isFetching = GuildPopoutStore.isFetchingGuild(guildId);
+    const lastFetched = lastFetchedMap.get(guildId);
+    const isExpired = !lastFetched || Date.now() - lastFetched > 1000 * 60 * 5;
+    if ((!popoutGuild || isExpired) && !isFetching) {
+      void fetchGuildPopout(guildId).finally(() => {
+        lastFetchedMap.set(guildId, Date.now());
+      });
     }
 
     const memberStoreCount = GuildMemberCountStore.getMemberCount(guildId);
@@ -94,6 +101,8 @@ export default function MemberCount(): React.ReactNode {
       </div>,
     );
   }
+
+  if (!children.length) return null;
 
   return (
     <Flex
