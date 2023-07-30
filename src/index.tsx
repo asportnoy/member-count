@@ -17,7 +17,6 @@ export async function start(): Promise<void> {
     const isChannel = args["data-list-id"]?.startsWith("members-");
     const isThread = !isChannel && args.className?.startsWith("members-");
 
-    console.log(args, isChannel, isThread);
     if (!isChannel && !isThread) return;
 
     const children = _.get(
@@ -28,8 +27,6 @@ export async function start(): Promise<void> {
       logger.error("Failed to find children", { props: res.props, children, isThread });
       return;
     }
-
-    console.log(res, children);
 
     children.unshift(
       <>
