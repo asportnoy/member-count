@@ -1,7 +1,7 @@
 {
   "id": "dev.albertp.MemberCount",
   "name": "Member Count",
-  "description": "Show a server's member count above the channel list",
+  "description": "Show a server's member count above the member list",
   "author": {
     "name": "asportnoy",
     "discordID": "489484338514100234",
