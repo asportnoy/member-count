@@ -1,9 +1,9 @@
 import { common, components, webpack } from "replugged";
-import { GuildMemberCountStore, GuildPopoutStore, SelectedGuildStore } from "./types";
+import { GuildMemberCountStore, GuildPopoutStore, SelectedChannelStore } from "./types";
 import { logger } from ".";
 import { fetchGuildPopout } from "./util";
 
-const { React, i18n } = common;
+const { React, i18n, channels } = common;
 const { Flex } = components;
 
 const lastFetchedMap = new Map<string, number>();
@@ -20,9 +20,9 @@ export default function MemberCount(): React.ReactNode {
     logger.error("Failed to find GuildPopoutStore");
     return;
   }
-  const SelectedGuildStore = webpack.getByStoreName<SelectedGuildStore>("SelectedGuildStore");
-  if (!SelectedGuildStore) {
-    logger.error("Failed to find SelectedGuildStore");
+  const SelectedChannelStore = webpack.getByStoreName<SelectedChannelStore>("SelectedChannelStore");
+  if (!SelectedChannelStore) {
+    logger.error("Failed to find SelectedChannelStore");
     return;
   }
 
@@ -38,8 +38,9 @@ export default function MemberCount(): React.ReactNode {
   const [memberCount, setMemberCount] = React.useState<number | null>(null);
 
   const update = (): void => {
-    const guildId = SelectedGuildStore.getGuildId();
-    if (!guildId) {
+    const channelId = SelectedChannelStore.getChannelId();
+    const guildId = channels.getChannel(channelId || "")?.guild_id;
+    if (!guildId || !/^\d+$/.test(guildId)) {
       setOnlineCount(null);
       setMemberCount(null);
       return;
@@ -64,7 +65,7 @@ export default function MemberCount(): React.ReactNode {
   React.useEffect(() => {
     update();
 
-    const stores = [GuildMemberCountStore, GuildPopoutStore, SelectedGuildStore];
+    const stores = [GuildMemberCountStore, GuildPopoutStore, SelectedChannelStore];
 
     stores.forEach((store) => store.addChangeListener(update));
     return () => {

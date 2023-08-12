@@ -14,8 +14,8 @@ export interface GuildPopoutStore extends Store {
   isFetchingGuild: (id: string) => boolean;
 }
 
-export interface SelectedGuildStore extends Store {
-  getGuildId: () => string | null;
+export interface SelectedChannelStore extends Store {
+  getChannelId: () => string | null;
 }
 
 export interface ListThin {
