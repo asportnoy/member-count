@@ -51,9 +51,15 @@ export default function MemberCount(): React.ReactNode {
     const lastFetched = lastFetchedMap.get(guildId);
     const isExpired = !lastFetched || Date.now() - lastFetched > 1000 * 60 * 5;
     if ((!popoutGuild || isExpired) && !isFetching) {
-      void fetchGuildPopout(guildId).finally(() => {
-        lastFetchedMap.set(guildId, Date.now());
-      });
+      void fetchGuildPopout(guildId)
+        .then((shouldCache) => {
+          if (shouldCache) {
+            lastFetchedMap.set(guildId, Date.now());
+          }
+        })
+        .catch((err) => {
+          logger.error("Failed to fetch guild popout", { err });
+        });
     }
 
     const memberStoreCount = GuildMemberCountStore.getMemberCount(guildId);

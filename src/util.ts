@@ -1,9 +1,16 @@
 import { common } from "replugged";
 import { logger } from ".";
 
-const { api, constants, fluxDispatcher } = common;
+const { api, fluxDispatcher } = common;
 
-export async function fetchGuildPopout(guildId: string): Promise<void> {
+export async function fetchGuildPopout(guildId: string): Promise<boolean> {
+  if (!common.constants?.Endpoints) {
+    logger.error("replugged.common.constants.Endpoints is not defined", {
+      constants: common.constants,
+    });
+    return false;
+  }
+
   fluxDispatcher.dispatch({
     type: "GUILD_POPOUT_FETCH_START",
     guildId,
@@ -11,7 +18,7 @@ export async function fetchGuildPopout(guildId: string): Promise<void> {
 
   try {
     const res = await api.get({
-      url: (constants.Endpoints.GUILD_PREVIEW as (guildId: string) => string)(guildId),
+      url: (common.constants.Endpoints.GUILD_PREVIEW as (guildId: string) => string)(guildId),
       oldFormErrors: true,
     });
     if (!res.ok) {
@@ -30,5 +37,9 @@ export async function fetchGuildPopout(guildId: string): Promise<void> {
       type: "GUILD_POPOUT_FETCH_FAILURE",
       guildId,
     });
+
+    throw err;
   }
+
+  return true;
 }
