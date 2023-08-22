@@ -30,6 +30,8 @@ export async function fetchGuildPopout(guildId: string): Promise<boolean> {
       guildId,
       guild: res.body,
     });
+
+    return true;
   } catch (err) {
     logger.error(`Failed to fetch guild popout for ${guildId}`, err);
 
@@ -38,8 +40,6 @@ export async function fetchGuildPopout(guildId: string): Promise<boolean> {
       guildId,
     });
 
-    throw err;
+    return false;
   }
-
-  return true;
 }
