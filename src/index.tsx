@@ -1,4 +1,4 @@
-import { Injector, Logger, common, components, webpack } from "replugged";
+import { Injector, Logger, common, components, settings, webpack } from "replugged";
 import { GuildTooltip, ListThin } from "./types";
 import MemberCount from "./MemberCount";
 
@@ -7,6 +7,23 @@ const { ErrorBoundary, Flex } = components;
 
 const inject = new Injector();
 export const logger = Logger.plugin("MemberCount");
+
+interface Settings {
+  showInMemberList?: boolean;
+  showInGuildTooltip?: boolean;
+}
+
+const defaultSettings = {
+  showInMemberList: true,
+  showInGuildTooltip: true,
+} satisfies Settings;
+
+export { Settings } from "./Settings";
+
+export const cfg = await settings.init<Settings, keyof typeof defaultSettings>(
+  "dev.albertp.MemberCount",
+  defaultSettings,
+);
 
 async function patchGuildTooltip(): Promise<void> {
   const tooltipMod = await webpack.waitForModule<Record<string, GuildTooltip>>(
@@ -19,6 +36,7 @@ async function patchGuildTooltip(): Promise<void> {
   }
 
   inject.after(tooltipMod, key, ([{ guild }], res) => {
+    if (!cfg.get("showInGuildTooltip")) return;
     if (!guild) return;
     if (!res || typeof res !== "object" || !("props" in res)) return;
     if (!Array.isArray(res.props.text)) res.props.text = [res.props.text];
@@ -45,6 +63,7 @@ async function patchMemberList(): Promise<void> {
   }>("ListThin");
 
   inject.after(listMod.ListThin, "render", ([args], res) => {
+    if (!cfg.get("showInMemberList")) return;
     const isChannel = args["data-list-id"]?.startsWith("members-");
     const isThread = !isChannel && args.className?.startsWith("members-");
 
