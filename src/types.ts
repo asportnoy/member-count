@@ -21,3 +21,5 @@ export interface SelectedChannelStore extends Store {
 export interface ListThin {
   render: (args: { className?: string; "data-list-id"?: string }) => React.ReactElement;
 }
+
+export type GuildTooltip = (args: { guild: Guild }) => React.ReactNode;

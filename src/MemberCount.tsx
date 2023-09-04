@@ -1,14 +1,19 @@
-import { common, components, webpack } from "replugged";
+import { common, webpack } from "replugged";
 import { GuildMemberCountStore, GuildPopoutStore, SelectedChannelStore } from "./types";
 import { logger } from ".";
 import { fetchGuildPopout } from "./util";
 
 const { React, i18n, channels } = common;
-const { Flex } = components;
 
 const lastFetchedMap = new Map<string, number>();
 
-export default function MemberCount(): React.ReactNode {
+export default function MemberCount({
+  compact,
+  guildId,
+}: {
+  compact: boolean;
+  guildId?: string;
+}): React.ReactNode {
   const GuildMemberCountStore =
     webpack.getByStoreName<GuildMemberCountStore>("GuildMemberCountStore");
   if (!GuildMemberCountStore) {
@@ -39,7 +44,7 @@ export default function MemberCount(): React.ReactNode {
 
   const update = (): void => {
     const channelId = SelectedChannelStore.getChannelId();
-    const guildId = channels.getChannel(channelId || "")?.guild_id;
+    guildId ||= channels.getChannel(channelId || "")?.guild_id;
     if (!guildId || !/^\d+$/.test(guildId)) {
       setOnlineCount(null);
       setMemberCount(null);
@@ -54,7 +59,7 @@ export default function MemberCount(): React.ReactNode {
       void fetchGuildPopout(guildId)
         .then((shouldCache) => {
           if (shouldCache) {
-            lastFetchedMap.set(guildId, Date.now());
+            lastFetchedMap.set(guildId!, Date.now());
           }
         })
         .catch((err) => {
@@ -82,9 +87,11 @@ export default function MemberCount(): React.ReactNode {
   const children: React.ReactNode[] = [];
 
   if (onlineCount) {
-    const msg = i18n.Messages.INSTANT_INVITE_GUILD_MEMBERS_ONLINE.format({
-      membersOnline: onlineCount,
-    });
+    const msg = compact
+      ? onlineCount.toLocaleString()
+      : i18n.Messages.INSTANT_INVITE_GUILD_MEMBERS_ONLINE.format({
+          membersOnline: onlineCount,
+        });
     const dot = <i className={`${classes.statusOnline} ${classes.status}`} />;
 
     children.push(
@@ -96,9 +103,11 @@ export default function MemberCount(): React.ReactNode {
   }
 
   if (memberCount) {
-    const msg = i18n.Messages.INSTANT_INVITE_GUILD_MEMBERS_TOTAL.format({
-      count: memberCount,
-    });
+    const msg = compact
+      ? memberCount.toLocaleString()
+      : i18n.Messages.INSTANT_INVITE_GUILD_MEMBERS_TOTAL.format({
+          count: memberCount,
+        });
     const dot = <i className={`${classes.statusOffline} ${classes.status}`} />;
 
     children.push(
@@ -111,15 +120,5 @@ export default function MemberCount(): React.ReactNode {
 
   if (!children.length) return null;
 
-  return (
-    <Flex
-      direction={Flex.Direction.VERTICAL}
-      align={Flex.Align.CENTER}
-      style={{
-        marginTop: "20px",
-        gap: "4px",
-      }}>
-      {children}
-    </Flex>
-  );
+  return children;
 }
