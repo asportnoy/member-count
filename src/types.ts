@@ -7,10 +7,12 @@ export interface GuildMemberCountStore extends Store {
 }
 
 export interface GuildPopoutStore extends Store {
-  getGuild: (id: string) => Guild & {
-    presenceCount: number | null;
-    memberCount: number | null;
-  };
+  getGuild: (id: string) =>
+    | (Guild & {
+        presenceCount: number | null;
+        memberCount: number | null;
+      })
+    | null;
   isFetchingGuild: (id: string) => boolean;
 }
 

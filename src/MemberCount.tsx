@@ -55,7 +55,7 @@ export default function MemberCount({
     const isFetching = GuildPopoutStore.isFetchingGuild(guildId);
     const lastFetched = lastFetchedMap.get(guildId);
     const isExpired = !lastFetched || Date.now() - lastFetched > 1000 * 60 * 5;
-    if ((!popoutGuild || isExpired) && !isFetching) {
+    if ((!popoutGuild?.memberCount || isExpired) && !isFetching) {
       void fetchGuildPopout(guildId)
         .then((shouldCache) => {
           if (shouldCache) {

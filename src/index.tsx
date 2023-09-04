@@ -37,6 +37,7 @@ async function patchGuildTooltip(): Promise<void> {
 
   inject.after(tooltipMod, key, ([{ guild }], res) => {
     if (!cfg.get("showInGuildTooltip")) return;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!guild) return;
     if (!res || typeof res !== "object" || !("props" in res)) return;
     if (!Array.isArray(res.props.text)) res.props.text = [res.props.text];

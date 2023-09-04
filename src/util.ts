@@ -8,7 +8,8 @@ let numFetches = 0;
 const MAX_SIMULTANEOUS_FETCHES = 1;
 
 export async function fetchGuildPopout(guildId: string): Promise<boolean> {
-  if (!common.constants?.Endpoints) {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!common.constants.Endpoints) {
     logger.error("replugged.common.constants.Endpoints is not defined", {
       constants: common.constants,
     });
