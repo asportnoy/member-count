@@ -24,4 +24,4 @@ export interface ListThin {
   render: (args: { className?: string; "data-list-id"?: string }) => React.ReactElement;
 }
 
-export type GuildTooltip = (args: { guild: Guild }) => React.ReactNode;
+export type GuildTooltip = (args: { disabled: boolean; guild: Guild }) => React.ReactNode;
