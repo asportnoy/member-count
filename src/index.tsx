@@ -1,9 +1,10 @@
 import { Injector, Logger, common, components, settings, webpack } from "replugged";
 import { GuildTooltip, ListThin } from "./types";
+import { Flex } from "replugged/components";
 import MemberCount from "./MemberCount";
 
 const { lodash: _ } = common;
-const { ErrorBoundary, Flex } = components;
+const { ErrorBoundary } = components;
 
 const inject = new Injector();
 export const logger = Logger.plugin("MemberCount");
@@ -29,7 +30,7 @@ async function patchGuildTooltip(): Promise<void> {
   const tooltipMod = await webpack.waitForModule<Record<string, GuildTooltip>>(
     webpack.filters.bySource("Messages.GUILD_JOIN_REQUEST_STATUS_TOOLTIP_STARTED"),
   );
-  const key = webpack.getFunctionKeyBySource(tooltipMod, "includeActivity:");
+  const key = webpack.getFunctionKeyBySource(tooltipMod, "renderPopout:");
   if (!key) {
     logger.error("Failed to find guild tooltip key");
     return;

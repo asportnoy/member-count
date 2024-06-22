@@ -31,21 +31,19 @@ export async function fetchGuildPopout(guildId: string): Promise<boolean> {
 
   numFetches++;
   try {
-    const res = await api
-      .get({
-        url: (common.constants.Endpoints.GUILD_PREVIEW as (guildId: string) => string)(guildId),
-        oldFormErrors: true,
-      })
-      .catch((err) => {
-        if (err && err.status === 429) {
-          const retryAfter = err.body.retry_after;
-          if (retryAfter && typeof retryAfter === "number") {
-            logger.warn(`Guild popout fetch rate limited, blocking requests for ${retryAfter}s`);
-            stopUntil = Date.now() + retryAfter * 1000;
-          }
+    const res = await api.HTTP.get({
+      url: (common.constants.Endpoints.GUILD_PREVIEW as (guildId: string) => string)(guildId),
+      oldFormErrors: true,
+    }).catch((err) => {
+      if (err && err.status === 429) {
+        const retryAfter = err.body.retry_after;
+        if (retryAfter && typeof retryAfter === "number") {
+          logger.warn(`Guild popout fetch rate limited, blocking requests for ${retryAfter}s`);
+          stopUntil = Date.now() + retryAfter * 1000;
         }
-        throw err;
-      });
+      }
+      throw err;
+    });
     if (!res.ok) {
       throw new Error(`Failed to fetch guild popout for ${guildId}: ${JSON.stringify(res.body)}`);
     }
