@@ -28,9 +28,9 @@ export const cfg = await settings.init<Settings, keyof typeof defaultSettings>(
 
 async function patchGuildTooltip(): Promise<void> {
   const tooltipMod = await webpack.waitForModule<Record<string, GuildTooltip>>(
-    webpack.filters.bySource("Messages.GUILD_JOIN_REQUEST_STATUS_TOOLTIP_STARTED"),
+    webpack.filters.bySource(".guildNameText,{"),
   );
-  const key = webpack.getFunctionKeyBySource(tooltipMod, "renderPopout:");
+  const key = webpack.getFunctionKeyBySource(tooltipMod, ".listItemTooltip,");
   if (!key) {
     logger.error("Failed to find guild tooltip key");
     return;

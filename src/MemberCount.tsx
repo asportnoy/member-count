@@ -1,9 +1,10 @@
-import { common, webpack } from "replugged";
+import { webpack } from "replugged";
+import { React, channels, i18n } from "replugged/common";
 import { GuildMemberCountStore, GuildPopoutStore, SelectedChannelStore } from "./types";
 import { logger } from ".";
 import { fetchGuildPopout } from "./util";
 
-const { React, i18n, channels } = common;
+const { intl, t } = i18n;
 
 const lastFetchedMap = new Map<string, number>();
 
@@ -89,7 +90,7 @@ export default function MemberCount({
   if (onlineCount) {
     const msg = compact
       ? onlineCount.toLocaleString()
-      : i18n.Messages.INSTANT_INVITE_GUILD_MEMBERS_ONLINE.format({
+      : intl.formatToPlainString(t.INSTANT_INVITE_GUILD_MEMBERS_ONLINE, {
           membersOnline: onlineCount,
         });
     const dot = <i className={`${classes.statusOnline} ${classes.status}`} />;
@@ -105,7 +106,7 @@ export default function MemberCount({
   if (memberCount) {
     const msg = compact
       ? memberCount.toLocaleString()
-      : i18n.Messages.INSTANT_INVITE_GUILD_MEMBERS_TOTAL.format({
+      : intl.formatToPlainString(t.INSTANT_INVITE_GUILD_MEMBERS_TOTAL, {
           count: memberCount,
         });
     const dot = <i className={`${classes.statusOffline} ${classes.status}`} />;
